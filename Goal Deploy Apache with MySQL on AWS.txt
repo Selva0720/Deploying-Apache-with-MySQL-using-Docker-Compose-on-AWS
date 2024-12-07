@@ -1,0 +1,100 @@
+Goal: Deploy Apache with MySQL on AWS using Docker Compose
+We will:
+
+Launch an AWS EC2 instance.
+Install Docker and Docker Compose.
+Create a simple Docker Compose file.
+Deploy Apache and MySQL.
+1. Set Up an AWS EC2 Instance
+Launch EC2 Instance:
+
+Choose Amazon Linux 2 or Ubuntu as the operating system.
+Use a security group that allows:
+HTTP (port 80) for the web server.
+MySQL (port 3306) for database connections.
+SSH (port 22) for connecting to the instance.
+Connect to Your EC2 Instance
+2. Install Docker and Docker Compose
+Update the Instance:
+
+sudo yum update -y   # For Amazon Linux
+
+
+sudo yum install docker -y
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo usermod -aG docker ec2-user
+
+Install Docker Compose:
+
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+Re-login for Permissions: Exit and reconnect:
+
+
+3. Create the Project Files
+Create a Project Directory:
+
+
+mkdir my-docker-project && cd my-docker-project
+Create a Simple index.html File:
+
+mkdir html
+echo "<h1>Hello, Docker Apache!</h1>" > html/index.html
+Create the docker-compose.yml File:
+
+
+nano docker-compose.yml
+
+Paste the following:
+
+yaml
+Copy code
+version: '3.8'
+services:
+  web:
+    image: httpd:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./html:/usr/local/apache2/htdocs/
+    depends_on:
+      - db
+
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: user
+      MYSQL_PASSWORD: userpassword
+    ports:
+      - "3306:3306"
+Save and exit (Ctrl+O, Enter, Ctrl+X).
+
+4. Start Docker Containers
+Run Docker Compose:
+
+
+sudo docker-compose up -d
+Verify Containers are Running:
+
+
+sudo docker ps
+5. Access Your Services
+Apache Web Server:
+
+Open your browser and go to http://your-ec2-public-ip.
+You should see: Hello, Docker Apache!
+MySQL Database:
+
+Use a tool like MySQL Workbench to connect:
+Host: your-ec2-public-ip
+Port: 3306
+Username: user
+Password: userpassword
+6. Stop or Remove Containers
+To stop the services:
+
+sudo docker-compose down
