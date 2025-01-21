@@ -1,4 +1,4 @@
-Goal: Deploy Apache with MySQL on AWS using Docker Compose
+Goal: Deploy a web app in Apache app server with MySQL on AWS using Docker Compose
 We will:
 
 Launch an AWS EC2 instance.
